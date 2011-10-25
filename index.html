@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>NewsCloud</title>
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+		<style type="text/css">
+			html { height: 100% }
+			body { height: 100%; margin: 0; padding: 0 }
+			#map_canvas { height: 100% }
+		</style>
+		<script type="text/javascript"
+			src="http://maps.googleapis.com/maps/api/js?sensor=false">
+			</script>
+			<!script type="text/javascript?
+			src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"
+		</script>
+
+		<script type="text/javascript">
+			var map;
+			function initialize() {
+				var latlng = new google.maps.LatLng(40.000, -73.644);
+				var myOptions = {
+zoom: 3,
+		center: latlng,
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+				};
+
+				map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+				var xh = new XMLHttpRequest(), gh = new XMLHttpRequest();
+				xh.open('GET', '/news', false);
+				xh.send();
+				if (xh.readyState == 4 && xh.status == 200) {
+					var data = JSON.parse(xh.responseText);
+					for (k in data) {
+						if (true || recent(data[k])) {
+							var l = data[k]['coordinates'][0];
+							var latlng = new google.maps.LatLng(l['lat']+jitter(), l['lng']+jitter());
+							var marker = new google.maps.Marker({
+title: data[k]['title'],
+map: map,
+position: latlng
+});
+marker.story = data[k];
+google.maps.event.addListener(marker, 'click', function() {
+		window.open(this.story['url']+'?pagewanted=all');
+		});
+}
+}
+} else {
+	alert('Sorry, but we are unable to load stories at this time.');
+}
+}
+
+function jitter() {
+	var epsilon = 0.01;
+	return -epsilon + Math.random()*2*epsilon;
+}
+function recent(s) {
+	return ((new Date() - new Date(s['published_date']))/3600000) <= 24;
+}
+</script>
+</head>
+<body onload="initialize()">
+	<div id="map_canvas" style="width:100%; height:100%"></div>
+	<div id="stories"></div>
+</body>
+</html>
