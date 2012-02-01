@@ -1,0 +1,8 @@
+NewsCloud
+
+NewsCloud is a hack designed to deliver location based news to the user.
+In order to demo NewsCloud, download node.js and then run from terminal "node server.js" in the NewsCloud directory. Then browse to the IP address that NewsCloud reports at port 1337.
+
+Cheers!
+
+Mike and Calvin
